@@ -10,6 +10,7 @@
 # Author: Francis Wolinski
 # Version: 1.0, March 2007
 # Copyright (c) Francis Wolinski 2007
+# Modified: Tom Faris (ta.faris@gmail.com), 2010
 #
 # User Manual
 #
@@ -43,8 +44,15 @@ import datetime
 
 ABIF_TYPES = {1: 'byte', 2: 'char', 3: 'word', 4: 'short', 5: 'long', 7: 'float', 8: 'double',\
         10: 'date', 11: 'time', 12: 'thumb', 13: 'bool', 18: 'pString', 19: 'cString'}
+		#28: 'short[]', 30: 'char[]', 31: 'int[]/long[]', 32: 'double[]', 33: 'cString', 34: 'pString'}
 
 class ABIFReader:
+    """Python implementation of an ABIF file reader according to Applied Biosystems' specificatons.
+@author: Francis Wolinski
+@copyright: Francis Wolinski 2007
+@credits: [Francis Wolinski, Tom Faris (modified,2012)]
+    """
+
     def __init__(self, fn):
         self.filename = fn
         self.file = open(fn, 'rb')
@@ -55,18 +63,20 @@ class ABIFReader:
         self.version = self.readNextShort()
         dir = DirEntry(self)
         self.seek(dir.dataoffset)
-        self.entries = [DirEntry(self) for i in range(dir.numelements)]
+        self.entries = [DirEntry(self, i+1) for i in range(dir.numelements)]
+        self.rootEntry = dir;
 
     def getData(self, name, num = 1):
         entry = self.getEntry(name, num)
         if not entry:
-            raise SystemExit("error: Entry '%s (%i)' not found in '%s'" % (name, num, self.filename))
-        self.seek(entry.mydataoffset())
-        data = self.readData(entry.elementtype, entry.numelements)
-        if data != NotImplemented and len(data) == 1:
-            return data[0]
+            print("error: Entry '%s (%i)' not found in '%s'" % (name, num, self.filename))
         else:
-            return data
+            self.seek(entry.mydataoffset())
+            data = self.readData(entry.elementtype, entry.numelements)
+            if data != NotImplemented and len(data) == 1:
+                return data[0]
+            else:
+                return data
 
     def showEntries(self):
         for e in self.entries:
@@ -75,6 +85,16 @@ class ABIFReader:
     def getEntry(self, name, num):
         for e in self.entries:
             if e.name == name and e.number == num:
+                return e
+        return None
+		
+    def getEntryById(self, id):
+        """ Get the entry whose id field is equal to the specified.
+
+           id - An integer id.		
+        """
+        for e in self.entries:
+            if e.id == id:
                 return e
         return None
 
@@ -105,13 +125,27 @@ class ABIFReader:
             return self.readNextpString()
         elif type == 19:
             return self.readNextcString()
+        
+        elif type == 28: # Doc says short[]
+            return 0
+        elif type == 30: # Doc says char[]
+            return[self.readNextByte() for i in range(num)]
+        elif type == 31: # Doc says int[], but also long[]
+            return 0
+        elif type == 32: # Doc says double[]
+            return 0
+        elif type == 33:  # Doc says cString
+            return self.readNextcString()
+        elif type == 34:  # Doc says pString
+            return 0
+
         elif type >= 1024:
             return self.readNextUserData(type, num)
         else:
             return NotImplemented
 
     def readNextBool(self):
-        return readNextByte(self) == 1
+        return self.readNextByte() == 1
 
     def readNextByte(self):
         return self.primUnpack('B', 1)
@@ -182,7 +216,7 @@ class ABIFReader:
         return self.file.tell()
 
 class DirEntry:
-    def __init__(self, reader):
+    def __init__(self, reader, id=-1):
         self.name = reader.readNextString(4)
         self.number = reader.readNextInt()
         self.elementtype = reader.readNextShort()
@@ -192,10 +226,14 @@ class DirEntry:
         self.dataoffsetpos = reader.tell()
         self.dataoffset = reader.readNextInt()
         self.datahandle = reader.readNextInt()
+        self.id = id  # Give each entry a unique ID
 
     def __str__(self):
-        return "%s (%i) / %s (%i)" % (self.name, self.number, self.mytype(), self.numelements)
+        return "%i: %s (%i) / %s (%i)" % (self.id, self.name, self.number, self.mytype(), self.numelements)
 
+    def __repr__(self):
+        return "%s (%i)" % (self.name, self.number)
+		
     def mydataoffset(self):
         if self.datasize <= 4:
             return self.dataoffsetpos
