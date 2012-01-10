@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!C:\Python27\python.exe
 # Python implementation of an ABIF file reader according to Applied Biosystems' specificatons,
 # see http://www.appliedbiosystems.com/support/software_community/ABIF_File_Format.pdf
 #
@@ -43,7 +43,8 @@ import struct
 import datetime
 
 ABIF_TYPES = {1: 'byte', 2: 'char', 3: 'word', 4: 'short', 5: 'long', 7: 'float', 8: 'double',\
-        10: 'date', 11: 'time', 12: 'thumb', 13: 'bool', 18: 'pString', 19: 'cString'}
+        10: 'date', 11: 'time', 12: 'thumb', 13: 'bool', 18: 'pString', 19: 'cString',
+		1023: 'directory' }
 		#28: 'short[]', 30: 'char[]', 31: 'int[]/long[]', 32: 'double[]', 33: 'cString', 34: 'pString'}
 
 class ABIFReader:
@@ -126,18 +127,18 @@ class ABIFReader:
         elif type == 19:
             return self.readNextcString()
         
-        elif type == 28: # Doc says short[]
-            return 0
-        elif type == 30: # Doc says char[]
-            return[self.readNextByte() for i in range(num)]
-        elif type == 31: # Doc says int[], but also long[]
-            return 0
-        elif type == 32: # Doc says double[]
-            return 0
-        elif type == 33:  # Doc says cString
-            return self.readNextcString()
-        elif type == 34:  # Doc says pString
-            return 0
+        #elif type == 28: # Doc says short[]
+        #    return 0
+        #elif type == 30: # Doc says char[]
+        #    return[self.readNextByte() for i in range(num)]
+        #elif type == 31: # Doc says int[], but also long[]
+        #    return 0
+        #elif type == 32: # Doc says double[]
+        #    return 0
+        #elif type == 33:  # Doc says cString
+        #    return self.readNextcString()
+        #elif type == 34:  # Doc says pString
+        #    return 0
 
         elif type >= 1024:
             return self.readNextUserData(type, num)
