@@ -1,4 +1,17 @@
 #!C:\Python27\python.exe
+#
+# HID files (as of 01/2012) do not work right out of the box with the ABIFReader script.
+# The problem is that the "tdir" root directory element of the ABIF file format seems to 
+# point to the wrong byte offset (via its "dataoffset" property) in the file for the rest 
+# of its entries. However, the HID file actually contains more than one listing of directory 
+# entries. Some seem to contain 2-3. By replacing the existing value for tdir.dataoffset 
+# with the offset of the first listing of these entries, we are able to read the file using
+# ABIFReader with no issue.
+#
+# This script takes a specified HID file, locates the first listing of directory entries,
+# copies the file and replaces the existing tdir offset with the located offset, thus making
+# it readable with ABIFReader.
+#
 import sys,os,shutil
 from ABIFReader import *
 
