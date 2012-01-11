@@ -8,8 +8,9 @@ and extract data from an HID file.
 
 """
 
-import subprocess,os,re
+import subprocess,os,sys,re
 from optparse import OptionParser
+sys.path.append(os.path.dirname(__file__))
 
 # Read cmd line arguments
 parser = OptionParser()
@@ -23,9 +24,9 @@ else:
 	# Create a new name for the modified HID file to output to
 	outputFilePath = "MOD_%s" % (os.path.basename(os.path.realpath(inputFilePath)))
 	# Create the modified HID file by calling the modHIDFile.py script, passing it the input and output file paths
-	subprocess.call(["python", "modHIDFile.py", "-f%s" % (inputFilePath), "-o%s" % outputFilePath])
+	subprocess.call(["python", os.path.join( os.path.dirname(__file__), "modHIDFile.py"), "-f%s" % (inputFilePath), "-o%s" % outputFilePath])
 	# Create the xml tag list by calling the ABIFTagList.py script, passing it the file path to the modified HID file
-	p = subprocess.Popen(["python", "ABIFTagList.py", "-f%s" % outputFilePath], stdout=subprocess.PIPE)
+	p = subprocess.Popen(["python", os.path.join( os.path.dirname(__file__), "ABIFTagList.py"), "-f%s" % outputFilePath], stdout=subprocess.PIPE)
 	# Capture process output
 	out, err = p.communicate()
 	# "out" is the stdout text from running the script above

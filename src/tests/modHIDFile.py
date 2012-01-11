@@ -9,7 +9,7 @@ HID file into a format that can be read by ABIFReader.
 
 import sys,os
 from optparse import OptionParser
-sys.path.append(os.path.realpath("../"))  # Append the '../src/' directory to our path so we can find the 'ABIF' module
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))  # Append the '../src/' directory to our path so we can find the 'ABIF' module
 from ABIF.HIDFileAlter import *
 
 # Setup an argument parser 

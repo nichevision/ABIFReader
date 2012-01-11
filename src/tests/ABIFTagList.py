@@ -10,8 +10,9 @@ import sys,os,re
 from optparse import OptionParser
 from xml.dom.minidom import Document
 from time import gmtime, strftime
-sys.path.append(os.path.realpath("../"))  # Append the '../src/' directory to our path so we can find the 'ABIF' module
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))  # Append the '../src/' directory to our path so we can find the 'ABIF' module
 from ABIF.ABIFReader import *
+
 
 def appendTextNode(doc, nodeToAppendTo, newElementName, data):
 	newNode = doc.createElement(newElementName)
@@ -48,7 +49,7 @@ else:
 	root.appendChild(props)
 	appendTextNode(doc,props, "Creator", "NicheVision ABIFTagList 1.0")
 	appendTextNode(doc,props,"Date_Created",strftime("%Y-%m-%d %H:%M:%S", gmtime()))
-	appendTextNode(doc,props,"Data_Source", abifFile)
+	appendTextNode(doc,props,"Data_Source", os.path.basename(abifFile))
 	# Create header element
 	header = doc.createElement("Header")
 	root.appendChild(header)
