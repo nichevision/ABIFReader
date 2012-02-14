@@ -9,18 +9,19 @@ HID file into a format that can be read by ABIFReader.
 
 import sys,os
 from optparse import OptionParser
-sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))  # Append the '../src/' directory to our path so we can find the 'ABIF' module
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(sys.argv[0]))))  # Append the '../src/' directory to our path so we can find the 'ABIF' module
 from ABIF.HIDFileAlter import *
 
 # Setup an argument parser 
 parser = OptionParser()
-parser.add_option("-f", help="Filepath to the HID file to alter.", dest="F");
-parser.add_option("-o", help="Filepath to where the modified HID file should be copied.", dest="O")
-(options,args) = parser.parse_args();
+parser.add_option("-f", help="[REQUIRED} Filepath to the HID file to alter.", dest="F")
+parser.add_option("-o", help="[OPTIONAL] Filepath to where the modified HID file should be copied.", dest="O")
+(options,args) = parser.parse_args()
 
 if not options.F:
 	print "HID filepath must be specified."
-	exit(-1)
+	parser.print_help()
+	sys.exit(-1)
 else:
 	hidFileName = options.F
 	
