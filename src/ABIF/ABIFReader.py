@@ -44,8 +44,8 @@ import datetime
 
 ABIF_TYPES = {1: 'byte', 2: 'char', 3: 'word', 4: 'short', 5: 'long', 7: 'float', 8: 'double',\
         10: 'date', 11: 'time', 12: 'thumb', 13: 'bool', 18: 'pString', 19: 'cString',
-		1023: 'directory' }
-		#28: 'short[]', 30: 'char[]', 31: 'int[]/long[]', 32: 'double[]', 33: 'cString', 34: 'pString'}
+        1023: 'directory' }
+        #28: 'short[]', 30: 'char[]', 31: 'int[]/long[]', 32: 'double[]', 33: 'cString', 34: 'pString'}
 
 class ABIFReader:
     """Python implementation of an ABIF file reader according to Applied Biosystems' specificatons.
@@ -88,11 +88,11 @@ class ABIFReader:
             if e.name == name and e.number == num:
                 return e
         return None
-		
+        
     def getEntryById(self, id):
         """ Get the entry whose id field is equal to the specified.
 
-           id - An integer id.		
+           id - An integer id.        
         """
         for e in self.entries:
             if e.id == id:
@@ -234,7 +234,7 @@ class DirEntry:
 
     def __repr__(self):
         return "%s (%i)" % (self.name, self.number)
-		
+        
     def mydataoffset(self):
         if self.datasize <= 4:
             return self.dataoffsetpos

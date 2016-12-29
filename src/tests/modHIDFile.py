@@ -19,17 +19,17 @@ parser.add_option("-o", help="[OPTIONAL] Filepath to where the modified HID file
 (options,args) = parser.parse_args()
 
 if not options.F:
-	print "HID filepath must be specified."
-	parser.print_help()
-	sys.exit(-1)
+    print "HID filepath must be specified."
+    parser.print_help()
+    sys.exit(-1)
 else:
-	hidFileName = options.F
-	
-	if (not options.O): 
-		# Create a destination file name since one was not specified
-		alteredFileName = "MOD_%s" % (os.path.basename(os.path.realpath(hidFileName)))
-	else:
-		alteredFileName = options.O
-	# Create an HIDFileAlter instance and alter the specified file
-	fileAlter = HIDFileAlter(hidFileName)
-	fileAlter.alterHIDFile(alteredFileName)
+    hidFileName = options.F
+    
+    if (not options.O): 
+        # Create a destination file name since one was not specified
+        alteredFileName = "MOD_%s" % (os.path.basename(os.path.realpath(hidFileName)))
+    else:
+        alteredFileName = options.O
+    # Create an HIDFileAlter instance and alter the specified file
+    fileAlter = HIDFileAlter(hidFileName)
+    fileAlter.alterHIDFile(alteredFileName)
